@@ -5,10 +5,6 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-
-
-
-
 local function updatePageNavigation()
   Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
@@ -81,6 +77,7 @@ end
 
 function RaidInfo:recordByUnitId(unitId)
   local fullName = Util.GetFullUnitName(unitId)
+  if (not fullName) then return end
   local first, _ = Util.DecomposeName(fullName)
   if (first == UNKNOWNOBJECT) then
      RaidInfo:RequestReindexing()
@@ -140,7 +137,6 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-
 local PagedView = {};
 PagedView.__index = PagedView;
 function PagedView:New(itemsPerPage)
@@ -172,6 +168,8 @@ end
 function PagedView:GetNavigationStatus()
   return (self.currentPage ~= 1), (self.currentPage ~= self.maxPages), self.currentPage, self.maxPages
 end
+
+
 
 function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
@@ -277,6 +275,11 @@ function Addon:ClaimMaster()
   else
     print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
   end
+end
+
+function Addon:GetItemLinkFromId(id)
+  local itemIndex = Addon.itemListView:IdToIndex(id);
+  return Addon.itemList:GetItemLink(itemIndex)
 end
 
 function Addon:ProcessClaimMaster(name)
@@ -573,7 +576,7 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
     UIDropDownMenu_AddButton(info, level)
   end
   local info = UIDropDownMenu_CreateInfo()
-  info.text = "|cFFFF0000" .. "Disable" .. "|r"
+  info.text = "|cFFFF0000" .. DISABLE .. "|r"
   info.value = 1000
   info.func = KetzerischerlootverteilerRarityDropDown_OnClick
   UIDropDownMenu_AddButton(info, level)
