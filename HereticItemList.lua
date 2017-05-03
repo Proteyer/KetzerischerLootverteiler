@@ -5,6 +5,8 @@ HereticList.__index = HereticList
 function HereticList:New(instanceName, difficultyID, instanceID)
   local obj = {
     instanceName = instanceName,
+	instanceID = instanceID, -- the MapID returned by GetInstanceInfo() for comparison
+	mapID = mapID, -- the "real MapID" returned by GetCurrentMapAreaID() for showing localised string via GetMapNameByID(mapID)
     difficultyID = difficultyID,
     instanceID = instanceID,
     entries = {},
